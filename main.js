@@ -1,86 +1,188 @@
-let newsFeed = [
-    {title:"Google News Feed", url: "http://news.google.com/?output=rss"},
-    {title:"BBC News Feed", url: "http://www.bbc.co.uk/news/10628494"},
-    {title:"CBN World News", url: "http://www.cbn.com/cbnnews/world/feed/"},
-    {title:"Daily Telegraph List", url: "https://www.dailytelegraph.com.au/help-rss"},
-    {title:"CBN US News", url: "http://www.cbn.com/cbnnews/us/feed/"},
-    {title:"Yahoo.com News", url: "http://news.yahoo.com/rss/"},
-    {title:"BBC Technology News", url: "http://feeds.bbci.co.uk/news/technology/rss.xml"},
-    {title:"BBC Business News", url: "http://feeds.bbci.co.uk/news/business/rss.xml"},
-    {title:"BBC UK News", url: "http://feeds.bbci.co.uk/news/rss.xml"},
-    {title:"The West Australian", url: "https://thewest.com.au/rss-feeds"}
-
+const feeds = [
+    {
+        url:'https://news.google.com/news/rss',
+        name:'Google news'
+    },
+    {
+        url:'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml',
+        name:'New York Times'
+    },
+    {
+        url:'https://www.theguardian.com/world/rss',
+        name:'The Guardian'
+    },
+    {
+        url:'https://www.aljazeera.com/xml/rss/all.xml',
+        name:'Al Jazeera'
+    },
+    {
+        url:'https://feeds.bbci.co.uk/news/rss.xml',
+        name:'BBC News'
+    },
+    {
+        url:'https://cdn.feedcontrol.net/8/1114-wioSIX3uu8MEj.xml',
+        name:'Reuters'
+    },
+    {
+        url:'http://rss.cnn.com/rss/cnn_topstories.rss',
+        name:'CNN'
+    },
+    {
+        url:'https://www.yahoo.com/news/rss',
+        name:'Yahoo News'
+    },
+    
+    {
+        url:'https://www.ft.com/?format=rss',
+        name:'Financial Times'
+    },
+    {
+        url:'https://www.espn.com/espn/rss/news',
+        name:'ESPN'
+    },
+    
+    {
+        url:'https://feeds.simplecast.com/qm_9xx0g',
+        name:'Crime Junkie'
+    },
+    {
+        url:'https://rss.art19.com/apology-line',
+        name:'The Apology Line'
+    },
+    {
+        url:'https://feeds.megaphone.fm/WWO3519750118',
+        name:'The Dan Bongino Show'
+    }
+    
 ];
 
-function begin(){
-    let newsList = document.getElementById("news-list")
-    newsList.innerHTML =" ";
-    for(let i =0;i<10;i++){
-        let newsItem = newsFeed[i];
-        let listItem = document.createElement("li"); 
-        let listurl = document.createElement("li");
-        let link = document.createElement("a");
-        link.style.color = "navy";
-        let url = newsItem.url;
-        link.href = url;
-        link.innerHTML = url ;
-        listItem.textContent = newsItem.title;
-        listurl.appendChild(link)
-        newsList.appendChild(listItem);
-        newsList.appendChild(listurl);
-        listItem.style.border = "1px dotted black"
-        
-}
-}
+const feedList = document.getElementById('feeds');
+const sub = document.getElementById('sub')
 
-let submitBtn=document.getElementById("submit-btn");
-submitBtn.addEventListener("click",function(){
-    /*
-    var t = prompt("Enter the News Title");
-    var u = prompt("Enter the News URL");
-    var o ={};
-    o.title = t;
-    o.url = u;
-    newsFeed.unshift(o);
-    begin();
-    */
+loadFeeds(feeds);
 
+sub.addEventListener("click", function() {
+    
     var popup = document.createElement("div");
     popup.innerHTML = "Add a new Resource <br><br>";
     var input1 = document.createElement("input");
     var input2 = document.createElement("input");
     var submitButton = document.createElement("button");
 
+    submitButton.style.position = "absolute";
+    submitButton.style.top = "75%";
+    submitButton.style.left = "40%";
+
     popup.style.position = "absolute";
     popup.style.top = "50%";
     popup.style.left = "60%";
+    popup.style.height ="25%";
     popup.style.transform = "translate(-50%, -50%)";
-    popup.style.backgroundColor = "lightcoral";
+    popup.style.backgroundColor = "darkorange";
     popup.style.padding = "20px";
     popup.style.borderRadius = "5px";
     popup.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.75)";
 
+
     input1.setAttribute("type","text")
     input2.setAttribute("type","text")
-    input1.setAttribute("placeholder","Enter title")
-    input2.setAttribute("placeholder","Enter url")
+    input1.setAttribute("placeholder","Enter RSS feed title")
+    input2.setAttribute("placeholder","Enter RSS feed URL")
     submitButton.setAttribute("type","button")
     submitButton.innerHTML = "Submit"
+
     submitButton.addEventListener("click",function() {
-        var t = input1.value;
-        var u = input2.value;
-        document.body.removeChild(popup)
-        var o ={};
-        o.title = t;
-        o.url = u;
-        newsFeed.unshift(o);
-        begin();
-    })
+    const url = input2.value;
+    const title = input1.value;
+
+    if(title.trim() ===''){
+        showError('Title cannot be empty.Please enter a title.');
+        return;
+    }
+    if(url.trim() ===''){
+        showError('URL cannot be empty.Please enter a URL.');
+        return;
+    }
+    if(!isValidUrl(url)) {
+        showError('Invalid URL.Please enter a valid URL.');
+        return;
+    }  
+
+    document.body.removeChild(popup)
+
+    const newFeed = {url:url, name:title};
+    feeds.unshift(newFeed);
+
+    loadFeeds(feeds);
+
+})
     popup.appendChild(input1);
     popup.appendChild(input2);
     popup.appendChild(submitButton);
 
     document.body.appendChild(popup)
-    
-});
+})
 
+function loadFeeds(feeds) {
+
+    feedList.innerHTML = '';
+    for(let i=0;i<10;i++) {
+        const feedUrl = feeds[i].url;
+        const feedName = feeds[i].name;
+
+        const feedTitle = document.createElement('h2');
+        feedTitle.style.color = 'darkorange';
+        feedTitle.textContent = feedName;
+        feedList.appendChild(feedTitle);
+
+        const feedurl = document.createElement('h4');
+        feedurl.style.color = 'skyblue';
+        feedurl.style.textDecoration = 'underline';
+        feedurl.style.cursor = 'pointer'
+        feedurl.textContent = feedUrl;
+        feedList.appendChild(feedurl);
+
+        const br = document.createElement('br')
+        feedList.appendChild(br);
+
+        feedurl.addEventListener("click", function(){
+
+            fetch(`https://api.rss2json.com/v1/api.json?rss_url=${feedUrl}`)
+                .then(response => response.json())
+                .then(data => {
+                const feedItems = data.items;
+
+                const feedListItems = document.createElement('ul');
+
+                for (let j=0;j<feedItems.length;j++) {
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.style.color = 'lightblue';
+                    link.textContent = feedItems[j].title;
+                    link.href = feedItems[j].link;
+                    listItem.appendChild(link);
+                    feedListItems.appendChild(listItem);
+                }
+                feedurl.replaceWith(feedListItems);
+            })
+            .catch(error => console.log(error))
+    })
+}
+}
+
+function isValidUrl(url) {
+    const rssRegex = /^https?:\/\/(?:www\.)?.+(\.(rss|xml))?(?:$|\/|\?)/i;
+    return rssRegex.test(url);
+}
+
+function showError(message) {
+    const errorContainer = document.createElement('div');
+    errorContainer.style.color = 'red';
+    errorContainer.style.fontSize = '20px'
+    errorContainer.classList.add('error');
+    errorContainer.textContent=message;
+    document.body.appendChild(errorContainer);
+    setTimeout(() => {
+        document.body.removeChild(errorContainer);
+    }, 3000);
+}
