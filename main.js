@@ -130,7 +130,7 @@ function loadFeeds(feeds) {
         const feedUrl = feeds[i].url;
         const feedName = feeds[i].name;
 
-        const feedTitle = document.createElement('h2');
+        const feedTitle = document.createElement('h1');
         feedTitle.style.color = 'darkorange';
         feedTitle.textContent = feedName;
         feedList.appendChild(feedTitle);
@@ -154,12 +154,28 @@ function loadFeeds(feeds) {
 
                 const feedListItems = document.createElement('ul');
 
-                for (let j=0;j<feedItems.length;j++) {
+                for (let j=0;j<feedItems.length && j<5;j++) {
                     const listItem = document.createElement('li');
+
                     const link = document.createElement('a');
                     link.style.color = 'lightblue';
-                    link.textContent = feedItems[j].title;
+                    link.textContent = "Read more.....";
                     link.href = feedItems[j].link;
+
+                    const title = document.createElement("h2");
+                    title.textContent = feedItems[j].title;
+
+                    //const turl = feedItems[j].thumbnail || feedItems[j].enclosure?.thumbnail || '';
+                    //thumbnail.src = turl;
+
+                    const thumbnail = document.createElement('img');
+                    thumbnail.src = feedItems[j].enclosure.link 
+                    //|| feedItems[j].enclosure.url || feedItems[j].image || feedItems[j].image.url ;
+                    thumbnail.style.width = "400px";
+                    thumbnail.style.height = "200px";
+
+                    listItem.appendChild(title);
+                    listItem.appendChild(thumbnail);
                     listItem.appendChild(link);
                     feedListItems.appendChild(listItem);
                 }
