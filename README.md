@@ -1,2 +1,2 @@
 # NewsFeed-Application
-A simple NewsFeed application using Html, Css and Javascript
+1. A simple NewsFeed application using Html, Css and Javascript
